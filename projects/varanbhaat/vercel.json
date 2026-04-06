@@ -1,4 +1,6 @@
 {
+  "framework": "astro",
   "installCommand": "npm ci --legacy-peer-deps",
-  "buildCommand": "npm run build"
+  "buildCommand": "npx astro build",
+  "outputDirectory": ".vercel/output"
 }

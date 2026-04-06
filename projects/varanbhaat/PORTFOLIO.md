@@ -27,8 +27,8 @@ To deploy to Vercel, push to GitHub and import the repository into Vercel — th
 ```
 varanbhaat/
 ├── src/
+│   ├── content.config.ts      # Content Collection schema (defines blog frontmatter)
 │   ├── content/
-│   │   ├── config.ts          # Content Collection schema (defines blog frontmatter)
 │   │   └── blog/
 │   │       ├── engineering/   # Engineering blog posts
 │   │       ├── travel/        # Travel blog posts
@@ -77,7 +77,7 @@ Write your post in standard Markdown syntax.
 ```
 
 3. The post is automatically:
-   - Validated against the schema in `src/content/config.ts`
+   - Validated against the schema in `src/content.config.ts`
    - Rendered with the `BlogLayout.astro` wrapper
    - Listed on the `/blog` page, grouped by topic
    - Accessible at `/blog/<topic>/<slug>`

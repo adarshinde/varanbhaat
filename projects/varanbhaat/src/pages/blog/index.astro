@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const publishedPosts = allPosts
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Group by topic
+const postsByTopic = publishedPosts.reduce(
+  (acc, post) => {
+    const topic = post.data.topic;
+    if (!acc[topic]) {
+      acc[topic] = [];
+    }
+    acc[topic].push(post);
+    return acc;
+  },
+  {} as Record<string, typeof publishedPosts>
+);
+
+const topicOrder = ['engineering', 'travel', 'life', 'other'];
+const sortedTopics = Object.keys(postsByTopic).sort(
+  (a, b) => topicOrder.indexOf(a) - topicOrder.indexOf(b)
+);
+---
+
+<BaseLayout title="Blog">
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold mb-2 text-gray-900">Blog</h1>
+    <p class="text-gray-600 mb-12">
+      Thoughts on engineering, travel, life, and everything in between.
+    </p>
+
+    {sortedTopics.length === 0 ? (
+      <p class="text-gray-600">No posts yet. Check back soon!</p>
+    ) : (
+      <div class="space-y-12">
+        {sortedTopics.map((topic) => (
+          <section>
+            <h2 class="text-2xl font-bold mb-6 capitalize text-gray-900">
+              {topic}
+            </h2>
+            <div class="space-y-4">
+              {postsByTopic[topic].map((post) => {
+                const slug = post.id.replace(/\//g, '/');
+                return (
+                  <a
+                    href={`/blog/${slug}`}
+                    class="block p-6 bg-white rounded-lg shadow hover:shadow-md hover:bg-gray-50 transition-all"
+                  >
+                    <h3 class="text-xl font-semibold mb-2 text-gray-900">
+                      {post.data.title}
+                    </h3>
+                    <p class="text-gray-600 mb-4">{post.data.description}</p>
+                    <time class="text-sm text-gray-500">
+                      {post.data.date.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>
